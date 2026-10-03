@@ -1,661 +1,536 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Dashboard IA</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            color: white;
-            min-height: 100vh;
-
-            background:
-                radial-gradient(circle at top right, #5a2b8a55, transparent 35%),
-                radial-gradient(circle at bottom left, #7f4bc555, transparent 35%),
-                linear-gradient(135deg, #120c1e, #211233 50%, #160d25);
-        }
-
-        .dashboard {
-            width: 92%;
-            max-width: 1400px;
-            margin: auto;
-            padding: 45px 0 70px;
-        }
-
-        .encabezado {
-            margin-bottom: 35px;
-        }
-
-        .etiqueta {
-            color: #c59cff;
-            font-size: 13px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        h1 {
-            font-size: 38px;
-            margin: 8px 0;
-        }
-
-        .subtitulo {
-            color: #b8aec7;
-            font-size: 16px;
-        }
-
-        .panel-filtros {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr) auto;
-            gap: 15px;
-
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
-            backdrop-filter: blur(16px);
-
-            padding: 22px;
-            border-radius: 18px;
-            margin-bottom: 28px;
-        }
-
-        .filtro label {
-            display: block;
-            font-size: 12px;
-            color: #bdb3ca;
-            margin-bottom: 8px;
-        }
-
-        select {
-            width: 100%;
-            padding: 13px 14px;
-
-            background: #241735;
-            color: white;
-
-            border: 1px solid #523b6d;
-            border-radius: 10px;
-
-            outline: none;
-            cursor: pointer;
-        }
-
-        select:hover {
-            border-color: #a875e8;
-        }
-
-        .boton {
-            align-self: end;
-            height: 43px;
-
-            padding: 0 22px;
-
-            border: none;
-            border-radius: 10px;
-
-            background: linear-gradient(135deg, #8f5fd1, #bc83ff);
-            color: white;
-
-            font-weight: bold;
-            cursor: pointer;
-
-            transition: 0.25s;
-        }
-
-        .boton:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px #9d69df55;
-        }
-
-        .kpis {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-        }
-
-        .kpi {
-            position: relative;
-
-            padding: 25px;
-
-            border-radius: 18px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(255,255,255,0.10),
-                    rgba(255,255,255,0.04)
-                );
-
-            border: 1px solid rgba(255,255,255,0.12);
-
-            backdrop-filter: blur(14px);
-
-            overflow: hidden;
-
-            transition: 0.25s;
-        }
-
-        .kpi:hover {
-            transform: translateY(-5px);
-            border-color: #a976e3;
-        }
-
-        .kpi::after {
-            content: "";
-            position: absolute;
-
-            width: 90px;
-            height: 90px;
-
-            right: -30px;
-            top: -30px;
-
-            background: #9b66dd33;
-            border-radius: 50%;
-        }
-
-        .kpi-titulo {
-            color: #bdb3ca;
-            font-size: 13px;
-            margin-bottom: 14px;
-        }
-
-        .kpi-numero {
-            font-size: 38px;
-            font-weight: bold;
-        }
-
-        .kpi-descripcion {
-            font-size: 12px;
-            margin-top: 8px;
-            color: #8f839e;
-        }
-
-        .estado {
-            margin-top: 22px;
-            font-size: 13px;
-            color: #998ca9;
-        }
-
-        @media(max-width: 900px) {
-
-            .panel-filtros {
-                grid-template-columns: 1fr;
-            }
-
-            .kpis {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-        }
-
-        @media(max-width: 550px) {
-
-            .kpis {
-                grid-template-columns: 1fr;
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-<div class="dashboard">
-
-    <div class="encabezado">
-
-        <div class="etiqueta">
-            Investigación de Mercados
-        </div>
-
-        <h1>
-            Adopción de Inteligencia Artificial
-        </h1>
-
-        <div class="subtitulo">
-            Análisis interactivo de estudiantes de Ingeniería y Humanidades
-        </div>
-
-    </div>
-
-
-    <div class="panel-filtros">
-
-        <div class="filtro">
-
-            <label>FACULTAD</label>
-
-            <select id="facultad">
-                <option value="Todos">Todas</option>
-            </select>
-
-        </div>
-
-
-        <div class="filtro">
-
-            <label>AÑO DE INGRESO</label>
-
-            <select id="anio">
-                <option value="Todos">Todos</option>
-            </select>
-
-        </div>
-
-
-        <div class="filtro">
-
-            <label>FRECUENCIA DE USO</label>
-
-            <select id="frecuencia">
-                <option value="Todos">Todas</option>
-            </select>
-
-        </div>
-
-
-        <button class="boton" onclick="limpiarFiltros()">
-            Limpiar filtros
-        </button>
-
-    </div>
-
-
-    <div class="kpis">
-
-        <div class="kpi">
-
-            <div class="kpi-titulo">
-                RESPUESTAS
-            </div>
-
-            <div id="kpiRespuestas" class="kpi-numero">
-                -
-            </div>
-
-            <div class="kpi-descripcion">
-                Registros analizados
-            </div>
-
-        </div>
-
-
-        <div class="kpi">
-
-            <div class="kpi-titulo">
-                USO DIARIO DE IA
-            </div>
-
-            <div id="kpiDiario" class="kpi-numero">
-                -
-            </div>
-
-            <div class="kpi-descripcion">
-                Utiliza IA todos los días
-            </div>
-
-        </div>
-
-
-        <div class="kpi">
-
-            <div class="kpi-titulo">
-                SATISFACCIÓN POSITIVA
-            </div>
-
-            <div id="kpiSatisfaccion" class="kpi-numero">
-                -
-            </div>
-
-            <div class="kpi-descripcion">
-                De acuerdo o totalmente de acuerdo
-            </div>
-
-        </div>
-
-
-        <div class="kpi">
-
-            <div class="kpi-titulo">
-                MEJORA PERCIBIDA
-            </div>
-
-            <div id="kpiMejora" class="kpi-numero">
-                -
-            </div>
-
-            <div class="kpi-descripcion">
-                Considera que sus trabajos mejoraron
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div id="estado" class="estado">
-        Cargando información...
-    </div>
-
-</div>
-
-
-
-<script>
-
-let datosOriginales = [];
-
-
-fetch("encuestas.xlsx")
-
-.then(respuesta => respuesta.arrayBuffer())
-
-.then(datos => {
-
-    const workbook = XLSX.read(datos, {
-        type: "array"
-    });
-
-
-    const hoja = workbook.Sheets["Datos"];
-
-
-    datosOriginales =
-        XLSX.utils.sheet_to_json(hoja);
-
-
-    cargarFiltros();
-
-    actualizarDashboard();
-
-
-    document.getElementById("estado").textContent =
-        "Base actualizada correctamente · 56 respuestas disponibles";
-
-})
-
-
-.catch(error => {
-
-    console.error(error);
-
-    document.getElementById("estado").textContent =
-        "No fue posible cargar la base de datos";
-
-});
-
-
-
-function cargarFiltros() {
-
-    const facultades =
-        [...new Set(
-            datosOriginales
-            .map(x => x["Facultad"])
-            .filter(Boolean)
-        )]
-        .sort();
-
-
-    const anios =
-        [...new Set(
-            datosOriginales
-            .map(x => x["Año de ingreso"])
-            .filter(Boolean)
-        )]
-        .sort((a,b) => a-b);
-
-
-    const frecuencias =
-        [...new Set(
-            datosOriginales
-            .map(x => x["Frecuencia de uso de IA"])
-            .filter(Boolean)
-        )];
-
-
-    llenarSelect(
-        "facultad",
-        facultades
-    );
-
-
-    llenarSelect(
-        "anio",
-        anios
-    );
-
-
-    llenarSelect(
-        "frecuencia",
-        frecuencias
-    );
-
-}
-
-
-
-function llenarSelect(id, valores) {
-
-    const select =
-        document.getElementById(id);
-
-
-    valores.forEach(valor => {
-
-        const opcion =
-            document.createElement("option");
-
-
-        opcion.value = valor;
-
-        opcion.textContent = valor;
-
-
-        select.appendChild(opcion);
-
-    });
-
-}
-
-
-
-function filtrarDatos() {
-
-    const facultad =
-        document.getElementById("facultad").value;
-
-
-    const anio =
-        document.getElementById("anio").value;
-
-
-    const frecuencia =
-        document.getElementById("frecuencia").value;
-
-
-    return datosOriginales.filter(fila => {
-
-
-        const cumpleFacultad =
-            facultad === "Todos" ||
-            fila["Facultad"] == facultad;
-
-
-        const cumpleAnio =
-            anio === "Todos" ||
-            fila["Año de ingreso"] == anio;
-
-
-        const cumpleFrecuencia =
-            frecuencia === "Todos" ||
-            fila["Frecuencia de uso de IA"] == frecuencia;
-
-
-        return (
-            cumpleFacultad &&
-            cumpleAnio &&
-            cumpleFrecuencia
-        );
-
-    });
-
-}
-
-
-
-function porcentaje(valor, total) {
-
-    if(total === 0) {
-        return "0%";
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#160d25" />
+  <title>Dashboard IA | Investigación de Mercados</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-1:#0f0919;
+      --bg-2:#1d102f;
+      --panel:rgba(255,255,255,.065);
+      --panel-2:rgba(255,255,255,.095);
+      --border:rgba(255,255,255,.12);
+      --text:#f8f6ff;
+      --muted:#b9aec9;
+      --muted-2:#8f839f;
+      --accent:#b77cff;
+      --accent-2:#8f5dd2;
+      --accent-3:#d7b3ff;
+      --good:#7fe0bd;
+      --warn:#ffd98a;
+      --shadow:0 18px 50px rgba(0,0,0,.24);
     }
 
-    return Math.round(
-        valor / total * 100
-    ) + "%";
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 85% 12%, rgba(143,93,210,.22), transparent 28%),
+        radial-gradient(circle at 10% 92%, rgba(183,124,255,.14), transparent 30%),
+        linear-gradient(135deg,var(--bg-1),var(--bg-2) 55%,#120a20);
+    }
 
-}
+    button,select{font:inherit}
+    .shell{width:min(1460px,92vw);margin:0 auto;padding:42px 0 70px}
 
+    .hero{
+      display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:28px;
+    }
+    .eyebrow{color:var(--accent-3);font-size:12px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase}
+    h1{font-size:clamp(30px,4vw,48px);line-height:1.05;margin:8px 0 8px;letter-spacing:-1.4px}
+    .subtitle{color:var(--muted);font-size:15px}
+    .hero-badge{
+      min-width:170px;padding:14px 16px;border-radius:16px;background:var(--panel);border:1px solid var(--border);
+      backdrop-filter:blur(14px);text-align:right;
+    }
+    .hero-badge b{display:block;font-size:24px;color:var(--accent-3)}
+    .hero-badge span{font-size:12px;color:var(--muted)}
 
+    .glass{background:var(--panel);border:1px solid var(--border);backdrop-filter:blur(16px);box-shadow:var(--shadow)}
 
-function actualizarDashboard() {
+    .filters{
+      display:grid;grid-template-columns:1fr 1fr 1.15fr auto;gap:14px;padding:18px;border-radius:20px;margin-bottom:18px;
+    }
+    .filter label{display:block;color:var(--muted);font-size:11px;font-weight:750;letter-spacing:.55px;margin:0 0 7px}
+    select{
+      width:100%;height:44px;color:#fff;background:#211333;border:1px solid #51396c;border-radius:11px;padding:0 13px;outline:none;cursor:pointer;
+      transition:.2s ease;
+    }
+    select:hover,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(183,124,255,.09)}
+    .reset{
+      align-self:end;height:44px;border:0;border-radius:11px;padding:0 20px;color:white;font-weight:800;cursor:pointer;
+      background:linear-gradient(135deg,var(--accent-2),var(--accent));box-shadow:0 10px 24px rgba(143,93,210,.25);transition:.2s ease;
+    }
+    .reset:hover{transform:translateY(-2px)}
 
-    const datos =
-        filtrarDatos();
+    .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:18px}
+    .kpi{
+      position:relative;overflow:hidden;min-height:132px;padding:20px;border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.095),rgba(255,255,255,.045));border:1px solid var(--border);
+      transition:.22s ease;
+    }
+    .kpi:hover{transform:translateY(-4px);border-color:rgba(183,124,255,.55)}
+    .kpi:after{content:"";position:absolute;width:90px;height:90px;border-radius:50%;right:-34px;top:-32px;background:rgba(183,124,255,.15)}
+    .kpi-label{font-size:11px;color:var(--muted);font-weight:750;letter-spacing:.45px;text-transform:uppercase}
+    .kpi-value{font-size:34px;font-weight:850;margin-top:12px;letter-spacing:-1px}
+    .kpi-note{font-size:11px;color:var(--muted-2);margin-top:7px;line-height:1.25}
 
+    .tabs{
+      display:flex;gap:8px;overflow:auto;padding:7px;border-radius:16px;margin-bottom:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);
+    }
+    .tab-btn{border:0;background:transparent;color:var(--muted);padding:11px 16px;border-radius:11px;white-space:nowrap;cursor:pointer;font-weight:750;transition:.2s}
+    .tab-btn:hover{color:#fff;background:rgba(255,255,255,.06)}
+    .tab-btn.active{color:#fff;background:linear-gradient(135deg,rgba(143,93,210,.72),rgba(183,124,255,.72));box-shadow:0 8px 20px rgba(143,93,210,.18)}
 
-    const total =
-        datos.length;
+    .tab{display:none}.tab.active{display:block;animation:fade .22s ease}
+    @keyframes fade{from{opacity:.25;transform:translateY(4px)}to{opacity:1;transform:none}}
 
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+    .grid-3{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+    .card{border-radius:20px;padding:20px;background:var(--panel);border:1px solid var(--border);box-shadow:var(--shadow)}
+    .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+    .card-title{font-size:15px;font-weight:850;margin:0}
+    .card-sub{font-size:11px;color:var(--muted-2);margin-top:4px}
+    .pill{font-size:10px;color:var(--accent-3);border:1px solid rgba(183,124,255,.34);background:rgba(183,124,255,.08);padding:6px 9px;border-radius:999px;white-space:nowrap}
+    .chart-box{position:relative;height:320px}.chart-box.tall{height:390px}.chart-box.short{height:280px}
 
-    const diario =
-        datos.filter(
-            x =>
-            x["Frecuencia de uso de IA"]
-            ===
-            "A diario"
-        ).length;
+    .insights{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .insight{padding:16px;border-radius:15px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);min-height:118px}
+    .insight .num{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;border-radius:9px;background:rgba(183,124,255,.15);color:var(--accent-3);font-size:12px;font-weight:900;margin-bottom:10px}
+    .insight p{margin:0;color:#ddd5e8;font-size:12px;line-height:1.5}
 
+    .metric-list{display:grid;gap:10px}
+    .metric-row{display:grid;grid-template-columns:175px 1fr 58px;gap:10px;align-items:center}
+    .metric-row .name{font-size:11px;color:var(--muted)}
+    .track{height:9px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
+    .fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent-2),var(--accent-3));transition:width .35s ease}
+    .metric-row .pct{text-align:right;font-size:12px;font-weight:800}
 
-    const satisfaccion =
-        datos.filter(
-            x =>
-            x["Satisfacción general"] === "De acuerdo" ||
-            x["Satisfacción general"] === "Totalmente de acuerdo"
-        ).length;
+    .comparison-table{width:100%;border-collapse:separate;border-spacing:0 8px;font-size:12px}
+    .comparison-table th{color:var(--muted);text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:0 10px 4px}
+    .comparison-table td{padding:12px 10px;background:rgba(255,255,255,.045);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
+    .comparison-table td:first-child{border-left:1px solid rgba(255,255,255,.06);border-radius:11px 0 0 11px;color:#ddd5e8}
+    .comparison-table td:last-child{border-right:1px solid rgba(255,255,255,.06);border-radius:0 11px 11px 0;font-weight:850}
+    .delta-pos{color:var(--good)}.delta-neg{color:#ff9ea8}.delta-zero{color:var(--muted)}
 
+    .foot{margin-top:18px;color:var(--muted-2);font-size:11px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .loading{position:fixed;inset:0;background:#11091c;display:flex;align-items:center;justify-content:center;z-index:999;transition:opacity .35s ease}
+    .loading.hide{opacity:0;pointer-events:none}
+    .loader-card{text-align:center}.spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,.12);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .error{color:#ffb4bd}
 
-    const mejora =
-        datos.filter(
-            x =>
-            x["Cambio percibido en calidad"] === "Ha mejorado algo" ||
-            x["Cambio percibido en calidad"] === "Ha mejorado mucho"
-        ).length;
+    @media(max-width:1180px){.kpis{grid-template-columns:repeat(3,1fr)}.insights{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:900px){.filters{grid-template-columns:1fr 1fr}.grid-2,.grid-3{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}.hero-badge{text-align:left}.chart-box{height:290px}}
+    @media(max-width:620px){.shell{width:94vw;padding-top:26px}.filters{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.insights{grid-template-columns:1fr}.metric-row{grid-template-columns:130px 1fr 48px}.hero-badge{width:100%}}
+  </style>
+</head>
+<body>
+  <div class="loading" id="loading">
+    <div class="loader-card">
+      <div class="spinner"></div>
+      <div id="loadingText">Cargando y analizando las 56 respuestas...</div>
+    </div>
+  </div>
 
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Investigación de Mercados</div>
+        <h1>Adopción de Inteligencia Artificial</h1>
+        <div class="subtitle">Dashboard interactivo · estudiantes de Ingeniería y Humanidades</div>
+      </div>
+      <div class="hero-badge glass">
+        <b id="heroN">—</b>
+        <span>respuestas en el segmento actual</span>
+      </div>
+    </section>
 
-    document.getElementById(
-        "kpiRespuestas"
-    ).textContent =
-        total;
+    <section class="filters glass">
+      <div class="filter"><label>FACULTAD</label><select id="facultad"><option value="Todos">Todas</option></select></div>
+      <div class="filter"><label>AÑO DE INGRESO</label><select id="anio"><option value="Todos">Todos</option></select></div>
+      <div class="filter"><label>FRECUENCIA DE USO</label><select id="frecuencia"><option value="Todos">Todas</option></select></div>
+      <button class="reset" id="resetBtn">Limpiar filtros</button>
+    </section>
 
+    <section class="kpis">
+      <article class="kpi"><div class="kpi-label">Respuestas</div><div class="kpi-value" id="kpiN">—</div><div class="kpi-note">Registros analizados</div></article>
+      <article class="kpi"><div class="kpi-label">Uso diario</div><div class="kpi-value" id="kpiDaily">—</div><div class="kpi-note">Utiliza IA a diario</div></article>
+      <article class="kpi"><div class="kpi-label">Satisfacción</div><div class="kpi-value" id="kpiSat">—</div><div class="kpi-note">De acuerdo / totalmente de acuerdo</div></article>
+      <article class="kpi"><div class="kpi-label">Mejora percibida</div><div class="kpi-value" id="kpiImprove">—</div><div class="kpi-note">Sus trabajos mejoraron</div></article>
+      <article class="kpi"><div class="kpi-label">Verificación</div><div class="kpi-value" id="kpiVerify">—</div><div class="kpi-note">Siempre o frecuentemente</div></article>
+      <article class="kpi"><div class="kpi-label">Conciencia de riesgos</div><div class="kpi-value" id="kpiRisk">—</div><div class="kpi-note">Consciente o muy consciente</div></article>
+    </section>
 
-    document.getElementById(
-        "kpiDiario"
-    ).textContent =
-        porcentaje(
-            diario,
-            total
-        );
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="resumen">Resumen</button>
+      <button class="tab-btn" data-tab="uso">Uso y hábitos</button>
+      <button class="tab-btn" data-tab="percepcion">Aceptación y percepción</button>
+      <button class="tab-btn" data-tab="responsable">Uso responsable</button>
+      <button class="tab-btn" data-tab="comparacion">Comparación</button>
+    </nav>
 
+    <section class="tab active" id="tab-resumen">
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Frecuencia de uso de IA</div><div class="card-sub">Distribución del segmento seleccionado</div></div><span class="pill">Dinámico</span></div>
+          <div class="chart-box"><canvas id="chartFrequency"></canvas></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Hallazgos automáticos</div><div class="card-sub">Lectura descriptiva generada a partir de los filtros</div></div><span class="pill">Análisis</span></div>
+          <div class="insights" id="insights"></div>
+        </article>
+      </div>
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Indicadores de percepción</div><div class="card-sub">Porcentaje de respuestas positivas</div></div></div>
+          <div class="metric-list" id="summaryMetrics"></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Principales preocupaciones</div><div class="card-sub">Motivo principal seleccionado por los estudiantes</div></div></div>
+          <div class="chart-box short"><canvas id="chartConcernSummary"></canvas></div>
+        </article>
+      </div>
+    </section>
 
-    document.getElementById(
-        "kpiSatisfaccion"
-    ).textContent =
-        porcentaje(
-            satisfaccion,
-            total
-        );
+    <section class="tab" id="tab-uso">
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Herramientas utilizadas</div><div class="card-sub">Uso reportado = cualquier frecuencia distinta de “Nunca”</div></div><span class="pill">% del segmento</span></div>
+          <div class="chart-box tall"><canvas id="chartTools"></canvas></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Horas semanales de uso</div><div class="card-sub">Tiempo dedicado a IA en actividades académicas</div></div></div>
+          <div class="chart-box"><canvas id="chartHours"></canvas></div>
+        </article>
+      </div>
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Razón principal para usar IA</div><div class="card-sub">Primera razón del ranking de cada participante</div></div></div>
+          <div class="chart-box"><canvas id="chartReasons"></canvas></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Principal influencia</div><div class="card-sub">Qué influyó más en la decisión de usar o no IA</div></div></div>
+          <div class="chart-box"><canvas id="chartInfluence"></canvas></div>
+        </article>
+      </div>
+    </section>
 
+    <section class="tab" id="tab-percepcion">
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Aceptación por actividad académica</div><div class="card-sub">Aceptable + totalmente aceptable</div></div><span class="pill">% aceptación</span></div>
+          <div class="chart-box tall"><canvas id="chartAcceptance"></canvas></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Percepción general de la IA</div><div class="card-sub">De acuerdo + totalmente de acuerdo</div></div></div>
+          <div class="chart-box tall"><canvas id="chartPerception"></canvas></div>
+        </article>
+      </div>
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Política universitaria percibida</div><div class="card-sub">Cómo interpreta el estudiante el uso permitido de IA</div></div></div>
+          <div class="chart-box"><canvas id="chartPolicy"></canvas></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Lectura clave</div><div class="card-sub">Utilidad vs confianza</div></div></div>
+          <div id="utilityTrust" style="display:grid;gap:14px;padding-top:8px"></div>
+        </article>
+      </div>
+    </section>
 
-    document.getElementById(
-        "kpiMejora"
-    ).textContent =
-        porcentaje(
-            mejora,
-            total
-        );
+    <section class="tab" id="tab-responsable">
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Uso responsable e impacto</div><div class="card-sub">Indicadores positivos del segmento</div></div></div>
+          <div class="chart-box"><canvas id="chartResponsible"></canvas></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Preocupación principal</div><div class="card-sub">Limitaciones o riesgos percibidos</div></div></div>
+          <div class="chart-box tall"><canvas id="chartConcerns"></canvas></div>
+        </article>
+      </div>
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Situaciones experimentadas</div><div class="card-sub">Pregunta de selección múltiple; puede superar 100% al sumar</div></div></div>
+          <div class="chart-box"><canvas id="chartSituations"></canvas></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Capacitación</div><div class="card-sub">Disposición a recibir formación universitaria</div></div></div>
+          <div id="trainingBlock" style="display:grid;gap:14px;padding-top:8px"></div>
+        </article>
+      </div>
+    </section>
 
-}
+    <section class="tab" id="tab-comparacion">
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Ingeniería vs Humanidades</div><div class="card-sub">Comparación descriptiva de indicadores clave</div></div><span class="pill">Mismo año/frecuencia</span></div>
+          <div class="chart-box tall"><canvas id="chartCompare"></canvas></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><div><div class="card-title">Tabla comparativa</div><div class="card-sub">Diferencia en puntos porcentuales: Ingeniería − Humanidades</div></div></div>
+          <div style="overflow:auto"><table class="comparison-table"><thead><tr><th>Indicador</th><th>Ingeniería</th><th>Humanidades</th><th>Diferencia</th></tr></thead><tbody id="compareTable"></tbody></table></div>
+        </article>
+      </div>
+    </section>
 
+    <div class="foot">
+      <span id="status">Cargando base...</span>
+      <span>Los resultados son descriptivos de las 56 respuestas del sondeo.</span>
+    </div>
+  </main>
 
+<script>
+  let raw = [];
+  const charts = {};
+  const $ = id => document.getElementById(id);
+  const text = (r,k) => String(r?.[k] ?? "").trim();
+  const pct = (n,d) => d ? (n/d*100) : 0;
+  const fmtPct = n => `${Math.round(n)}%`;
+  const countIf = (arr,fn) => arr.reduce((a,r)=>a+(fn(r)?1:0),0);
+  const positiveLikert = v => ["De acuerdo","Totalmente de acuerdo"].includes(v);
 
-function limpiarFiltros() {
+  const palette = ["#b77cff","#8f5dd2","#d7b3ff","#7047a8","#c495ff","#5d3a86"];
 
-    document.getElementById(
-        "facultad"
-    ).value =
-        "Todos";
+  Chart.defaults.color = "#c9bdd9";
+  Chart.defaults.font.family = 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif';
+  Chart.defaults.plugins.legend.labels.usePointStyle = true;
+  Chart.defaults.plugins.legend.labels.boxWidth = 8;
+  Chart.defaults.plugins.tooltip.backgroundColor = "rgba(20,11,31,.96)";
+  Chart.defaults.plugins.tooltip.borderColor = "rgba(183,124,255,.35)";
+  Chart.defaults.plugins.tooltip.borderWidth = 1;
 
+  function destroyChart(id){ if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
+  function baseScale(){return {grid:{color:"rgba(255,255,255,.055)"},border:{color:"rgba(255,255,255,.08)"},ticks:{color:"#aa9bbd"}}}
 
-    document.getElementById(
-        "anio"
-    ).value =
-        "Todos";
+  function barChart(id, labels, values, horizontal=false, suffix=""){
+    destroyChart(id);
+    charts[id] = new Chart($(id),{
+      type:"bar",
+      data:{labels,datasets:[{data:values,backgroundColor:labels.map((_,i)=>palette[i%palette.length]),borderRadius:8,borderSkipped:false}]},
+      options:{responsive:true,maintainAspectRatio:false,indexAxis:horizontal?"y":"x",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw}${suffix}`}}},scales:horizontal?{x:{...baseScale(),beginAtZero:true},y:{...baseScale(),grid:{display:false}}}:{x:{...baseScale(),grid:{display:false}},y:{...baseScale(),beginAtZero:true}}}
+    });
+  }
 
+  function doughnut(id, labels, values){
+    destroyChart(id);
+    charts[id] = new Chart($(id),{
+      type:"doughnut",
+      data:{labels,datasets:[{data:values,backgroundColor:labels.map((_,i)=>palette[i%palette.length]),borderColor:"rgba(20,11,31,.75)",borderWidth:3,hoverOffset:6}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:"65%",plugins:{legend:{position:"bottom"}}}
+    });
+  }
 
-    document.getElementById(
-        "frecuencia"
-    ).value =
-        "Todos";
+  function groupedBar(id, labels, a, b){
+    destroyChart(id);
+    charts[id] = new Chart($(id),{
+      type:"bar",
+      data:{labels,datasets:[{label:"Ingeniería",data:a,backgroundColor:"#b77cff",borderRadius:7},{label:"Humanidades",data:b,backgroundColor:"#7fe0bd",borderRadius:7}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.raw.toFixed(1)}%`}}},scales:{x:{...baseScale(),grid:{display:false}},y:{...baseScale(),beginAtZero:true,max:100,ticks:{callback:v=>v+"%"}}}}
+    });
+  }
 
+  function unique(key){return [...new Set(raw.map(r=>text(r,key)).filter(Boolean))]}
+  function fillSelect(id, values){const s=$(id); values.forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;s.appendChild(o)})}
 
-    actualizarDashboard();
+  function selected(){return {fac:$('facultad').value,year:$('anio').value,freq:$('frecuencia').value}}
+  function filtered({ignoreFaculty=false}={}){
+    const f=selected();
+    return raw.filter(r =>
+      (ignoreFaculty || f.fac==="Todos" || text(r,"Facultad")===f.fac) &&
+      (f.year==="Todos" || text(r,"Año de ingreso")===f.year) &&
+      (f.freq==="Todos" || text(r,"Frecuencia de uso de IA")===f.freq)
+    );
+  }
 
-}
+  function metrics(data){
+    const n=data.length;
+    return {
+      n,
+      daily:pct(countIf(data,r=>text(r,"Frecuencia de uso de IA")==="A diario"),n),
+      sat:pct(countIf(data,r=>positiveLikert(text(r,"Satisfacción general"))),n),
+      improve:pct(countIf(data,r=>["Ha mejorado algo","Ha mejorado mucho"].includes(text(r,"Cambio percibido en calidad"))),n),
+      verify:pct(countIf(data,r=>["Siempre","Frecuentemente"].includes(text(r,"Verificación de información"))),n),
+      risk:pct(countIf(data,r=>["Consciente","Muy consciente"].includes(text(r,"Conciencia de riesgos"))),n),
+      training:pct(countIf(data,r=>["Dispuesto","Muy dispuesto"].includes(text(r,"Disposición a capacitación"))),n),
+      understand:pct(countIf(data,r=>positiveLikert(text(r,"IA ayuda a entender temas complejos"))),n),
+      ease:pct(countIf(data,r=>positiveLikert(text(r,"Facilidad de uso de IA"))),n),
+      trust:pct(countIf(data,r=>positiveLikert(text(r,"Confianza en resultados"))),n),
+      continueUse:pct(countIf(data,r=>positiveLikert(text(r,"Intención de seguir usando IA"))),n)
+    };
+  }
 
+  function distribution(data,key,order=[]){
+    const m={};data.forEach(r=>{const v=text(r,key);if(v)m[v]=(m[v]||0)+1});
+    const labels=order.filter(x=>m[x]!=null); Object.keys(m).forEach(x=>{if(!labels.includes(x))labels.push(x)});
+    return {labels,values:labels.map(x=>m[x])};
+  }
 
+  function percentBy(data,key,predicate){return pct(countIf(data,r=>predicate(text(r,key))),data.length)}
 
-document
-.getElementById("facultad")
-.addEventListener(
-    "change",
-    actualizarDashboard
-);
+  function renderKpis(m){
+    $('heroN').textContent=m.n;$('kpiN').textContent=m.n;$('kpiDaily').textContent=fmtPct(m.daily);$('kpiSat').textContent=fmtPct(m.sat);
+    $('kpiImprove').textContent=fmtPct(m.improve);$('kpiVerify').textContent=fmtPct(m.verify);$('kpiRisk').textContent=fmtPct(m.risk);
+  }
 
+  function renderSummary(data,m){
+    const freq=distribution(data,"Frecuencia de uso de IA",["A diario","Semanalmente","Mensualmente","Rara vez (algunas veces al mes)","Nunca"]);
+    barChart("chartFrequency",freq.labels,freq.values,false,"");
 
-document
-.getElementById("anio")
-.addEventListener(
-    "change",
-    actualizarDashboard
-);
+    const concern=distribution(data,"Preocupación principal");
+    const pairs=concern.labels.map((l,i)=>[l,concern.values[i]]).sort((a,b)=>b[1]-a[1]);
+    barChart("chartConcernSummary",pairs.map(x=>x[0]),pairs.map(x=>x[1]),true,"");
 
+    const rows=[
+      ["Ayuda a entender temas complejos",m.understand],
+      ["Facilidad de uso",m.ease],
+      ["Confianza en resultados",m.trust],
+      ["Intención de continuar",m.continueUse],
+      ["Satisfacción positiva",m.sat],
+      ["Disposición a capacitación",m.training]
+    ];
+    $('summaryMetrics').innerHTML=rows.map(([name,v])=>`<div class="metric-row"><div class="name">${name}</div><div class="track"><div class="fill" style="width:${Math.max(0,Math.min(100,v))}%"></div></div><div class="pct">${v.toFixed(1)}%</div></div>`).join('');
 
-document
-.getElementById("frecuencia")
-.addEventListener(
-    "change",
-    actualizarDashboard
-);
+    const faculty=selected().fac==="Todos"?"el segmento seleccionado":selected().fac;
+    const topConcern=pairs[0]||["Sin datos",0];
+    const trustGap=m.understand-m.trust;
+    const insightTexts=[
+      `${fmtPct(m.daily)} utiliza IA a diario en ${faculty}.`,
+      `${fmtPct(m.improve)} percibe una mejora en la calidad de sus trabajos académicos.`,
+      `La utilidad supera a la confianza por ${Math.round(trustGap)} puntos: ${fmtPct(m.understand)} dice que ayuda a entender temas complejos y ${fmtPct(m.trust)} confía en sus resultados.`,
+      `La preocupación principal es “${topConcern[0]}”, mencionada por ${topConcern[1]} estudiante${topConcern[1]===1?'':'s'}.`
+    ];
+    $('insights').innerHTML=insightTexts.map((t,i)=>`<div class="insight"><span class="num">${i+1}</span><p>${t}</p></div>`).join('');
+  }
 
+  function renderUsage(data){
+    const tools=["ChatGPT","Copilot","Gemini","Grok","Deepseek","Otra IA"];
+    const toolPct=tools.map(k=>percentBy(data,k,v=>v!==""&&v!=="Nunca"));
+    barChart("chartTools",tools,toolPct,true,"%");
+
+    const hours=distribution(data,"Horas semanales de IA",["Menos de 1 hora","1 a 3 horas","3 a 6 horas","6 a 10 horas","Más de 10 horas"]);
+    doughnut("chartHours",hours.labels,hours.values);
+
+    const reasons=distribution(data,"Razón principal");
+    const rp=reasons.labels.map((l,i)=>[l,reasons.values[i]]).sort((a,b)=>b[1]-a[1]);
+    barChart("chartReasons",rp.map(x=>x[0]),rp.map(x=>x[1]),true,"");
+
+    const inf=distribution(data,"Influencia principal");
+    doughnut("chartInfluence",inf.labels,inf.values);
+  }
+
+  function renderPerception(data,m){
+    const acceptance=[
+      ["Explicar un concepto","Aceptabilidad - Explicar un concepto"],
+      ["Resumir un artículo","Aceptabilidad - Resumir un artículo"],
+      ["Ideas para investigación","Aceptabilidad - Ideas para investigación"],
+      ["Estructurar ideas","Aceptabilidad - Estructurar ideas"],
+      ["Generar y editar texto","Aceptabilidad - Generar y editar texto"],
+      ["Apoyos visuales","Aceptabilidad - Apoyos visuales"]
+    ];
+    const av=acceptance.map(([_,k])=>percentBy(data,k,v=>["Aceptable","Totalmente aceptable"].includes(v)));
+    barChart("chartAcceptance",acceptance.map(x=>x[0]),av,true,"%");
+
+    const perception=[
+      ["Ayuda a entender",m.understand],["Facilidad de uso",m.ease],["Confianza",m.trust],["Continuará usando",m.continueUse],["Satisfacción",m.sat]
+    ];
+    barChart("chartPerception",perception.map(x=>x[0]),perception.map(x=>x[1]),true,"%");
+
+    const policy=distribution(data,"Percepción de política universitaria");
+    doughnut("chartPolicy",policy.labels,policy.values);
+
+    const gap=m.understand-m.trust;
+    $('utilityTrust').innerHTML=`
+      <div class="insight"><span class="num">A</span><p><b style="color:#fff">${m.understand.toFixed(1)}%</b> considera que la IA ayuda a entender mejor temas complejos.</p></div>
+      <div class="insight"><span class="num">B</span><p><b style="color:#fff">${m.trust.toFixed(1)}%</b> afirma confiar en que los resultados de IA son correctos.</p></div>
+      <div class="insight"><span class="num">Δ</span><p>Existe una brecha de <b style="color:#fff">${gap.toFixed(1)} puntos porcentuales</b> entre utilidad percibida y confianza.</p></div>`;
+  }
+
+  function renderResponsible(data,m){
+    const labels=["Verifica información","Percibe mejora","Conoce los riesgos","Dispuesto a capacitación"];
+    const values=[m.verify,m.improve,m.risk,m.training];
+    barChart("chartResponsible",labels,values,true,"%");
+
+    const concerns=distribution(data,"Preocupación principal");
+    const cp=concerns.labels.map((l,i)=>[l,concerns.values[i]]).sort((a,b)=>b[1]-a[1]);
+    barChart("chartConcerns",cp.map(x=>x[0]),cp.map(x=>x[1]),true,"");
+
+    const situations=[
+      "Me resulta más difícil trabajar o estudiar sin usar IA",
+      "Siento que dependo de la IA para producir un mejor trabajo",
+      "Siento que retengo menos información cuando uso IA para resolver algo",
+      "No he experimentado ninguna de estas situaciones"
+    ];
+    const sitVals=situations.map(s=>pct(countIf(data,r=>text(r,"Situaciones experimentadas").includes(s)),data.length));
+    barChart("chartSituations",["Dificultad sin IA","Dependencia","Menor retención","Ninguna"],sitVals,true,"%");
+
+    const training=distribution(data,"Disposición a capacitación",["Muy dispuesto","Dispuesto","Neutral","Poco dispuesto","Nada dispuesto"]);
+    const total=data.length||1;
+    $('trainingBlock').innerHTML=training.labels.map((l,i)=>{
+      const v=pct(training.values[i],total);return `<div class="metric-row"><div class="name">${l}</div><div class="track"><div class="fill" style="width:${v}%"></div></div><div class="pct">${v.toFixed(1)}%</div></div>`
+    }).join('');
+  }
+
+  function comparisonBase(){
+    const base=filtered({ignoreFaculty:true});
+    return {eng:base.filter(r=>text(r,"Facultad")==="Ingeniería"),hum:base.filter(r=>text(r,"Facultad")==="Humanidades")};
+  }
+
+  function renderComparison(){
+    const {eng,hum}=comparisonBase();const a=metrics(eng),b=metrics(hum);
+    const labels=["Uso diario","Satisfacción","Mejora","Verificación","Riesgos","Capacitación"];
+    const av=[a.daily,a.sat,a.improve,a.verify,a.risk,a.training];
+    const bv=[b.daily,b.sat,b.improve,b.verify,b.risk,b.training];
+    groupedBar("chartCompare",labels,av,bv);
+    $('compareTable').innerHTML=labels.map((label,i)=>{
+      const d=av[i]-bv[i];const cls=d>0.05?'delta-pos':d<-0.05?'delta-neg':'delta-zero';
+      return `<tr><td>${label}</td><td>${av[i].toFixed(1)}%</td><td>${bv[i].toFixed(1)}%</td><td class="${cls}">${d>0?'+':''}${d.toFixed(1)} pp</td></tr>`;
+    }).join('');
+  }
+
+  function renderAll(){
+    const data=filtered();const m=metrics(data);renderKpis(m);renderSummary(data,m);renderUsage(data);renderPerception(data,m);renderResponsible(data,m);renderComparison();
+    const f=selected();const parts=[];if(f.fac!=="Todos")parts.push(f.fac);if(f.year!=="Todos")parts.push(`Ingreso ${f.year}`);if(f.freq!=="Todos")parts.push(f.freq);
+    $('status').textContent=`${data.length} respuestas analizadas${parts.length?' · '+parts.join(' · '):' · vista general'}`;
+  }
+
+  function initFilters(){
+    fillSelect("facultad",unique("Facultad").sort());
+    fillSelect("anio",unique("Año de ingreso").sort((a,b)=>Number(a)-Number(b)));
+    const freqOrder=["A diario","Semanalmente","Mensualmente","Rara vez (algunas veces al mes)","Nunca"];
+    fillSelect("frecuencia",freqOrder.filter(v=>unique("Frecuencia de uso de IA").includes(v)));
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');$('tab-'+btn.dataset.tab).classList.add('active');
+  }));
+
+  ['facultad','anio','frecuencia'].forEach(id=>$(id).addEventListener('change',renderAll));
+  $('resetBtn').addEventListener('click',()=>{$('facultad').value='Todos';$('anio').value='Todos';$('frecuencia').value='Todos';renderAll()});
+
+  fetch(`encuestas.xlsx?v=${Date.now()}`)
+    .then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.arrayBuffer()})
+    .then(buf=>{
+      const wb=XLSX.read(buf,{type:'array'});const sheet=wb.Sheets['Datos'];if(!sheet)throw new Error('No existe la hoja Datos');
+      raw=XLSX.utils.sheet_to_json(sheet,{defval:''});
+      initFilters();renderAll();
+      $('loadingText').textContent='Datos cargados correctamente';
+      setTimeout(()=>$('loading').classList.add('hide'),250);
+    })
+    .catch(err=>{
+      console.error(err);$('loadingText').innerHTML='<span class="error">No fue posible cargar encuestas.xlsx. Revisa que el archivo esté en la raíz del repositorio.</span>';
+    });
 </script>
-
-
 </body>
 </html>
