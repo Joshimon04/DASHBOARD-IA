@@ -44,7 +44,7 @@
     .shell{width:min(1460px,92vw);margin:0 auto;padding:42px 0 70px}
 
     .hero{
-      display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:28px;
+      display:block;margin-bottom:28px;
     }
     .eyebrow{color:var(--accent-3);font-size:12px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase}
     h1{font-size:clamp(30px,4vw,48px);line-height:1.05;margin:8px 0 8px;letter-spacing:-1.4px}
@@ -55,6 +55,12 @@
     }
     .hero-badge b{display:block;font-size:24px;color:var(--accent-3)}
     .hero-badge span{font-size:12px;color:var(--muted)}
+
+    .section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:4px 2px 12px}
+    .section-kicker{font-size:12px;font-weight:850;letter-spacing:1.35px;text-transform:uppercase;color:var(--accent-3)}
+    .section-caption{font-size:12px;color:var(--muted-2);margin-top:4px}
+    .live-state{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}
+    .live-state:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 5px rgba(127,224,189,.08)}
 
     .glass{background:var(--panel);border:1px solid var(--border);backdrop-filter:blur(16px);box-shadow:var(--shadow)}
 
@@ -103,10 +109,15 @@
     .pill{font-size:10px;color:var(--accent-3);border:1px solid rgba(183,124,255,.34);background:rgba(183,124,255,.08);padding:6px 9px;border-radius:999px;white-space:nowrap}
     .chart-box{position:relative;height:320px}.chart-box.tall{height:390px}.chart-box.short{height:280px}
 
-    .insights{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-    .insight{padding:16px;border-radius:15px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);min-height:118px}
-    .insight .num{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;border-radius:9px;background:rgba(183,124,255,.15);color:var(--accent-3);font-size:12px;font-weight:900;margin-bottom:10px}
-    .insight p{margin:0;color:#ddd5e8;font-size:12px;line-height:1.5}
+    .insights{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .insight{position:relative;overflow:hidden;padding:16px;border-radius:15px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.028));border:1px solid rgba(255,255,255,.08);min-height:132px;transition:.2s ease}
+    .insight:hover{transform:translateY(-2px);border-color:rgba(183,124,255,.35)}
+    .insight:after{content:"";position:absolute;width:74px;height:74px;border-radius:50%;right:-28px;bottom:-32px;background:rgba(183,124,255,.08)}
+    .insight .num{display:inline-flex;align-items:center;justify-content:center;width:29px;height:29px;border-radius:9px;background:rgba(183,124,255,.15);color:var(--accent-3);font-size:12px;font-weight:900}
+    .insight-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .insight-title{font-size:10px;text-transform:uppercase;letter-spacing:.65px;color:var(--muted);font-weight:800}
+    .insight-value{font-size:25px;font-weight:900;letter-spacing:-.5px;color:#fff;margin-bottom:5px}
+    .insight-meta{font-size:11px;line-height:1.4;color:#cfc5dc}
 
     .metric-list{display:grid;gap:10px}
     .metric-row{display:grid;grid-template-columns:175px 1fr 58px;gap:10px;align-items:center}
@@ -122,6 +133,14 @@
     .comparison-table td:last-child{border-right:1px solid rgba(255,255,255,.06);border-radius:0 11px 11px 0;font-weight:850}
     .delta-pos{color:var(--good)}.delta-neg{color:#ff9ea8}.delta-zero{color:var(--muted)}
 
+    .compare-highlights{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+    .compare-highlight{padding:17px 18px;border-radius:17px;background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid var(--border);min-height:112px}
+    .compare-label{font-size:10px;color:var(--muted);font-weight:800;letter-spacing:.7px;text-transform:uppercase}
+    .compare-number{font-size:27px;font-weight:900;letter-spacing:-.6px;margin-top:9px}
+    .compare-note{font-size:11px;color:var(--muted-2);margin-top:5px;line-height:1.35}
+    .comparison-read{margin-top:14px;padding:15px 16px;border-radius:14px;background:rgba(183,124,255,.065);border:1px solid rgba(183,124,255,.18);font-size:12px;color:#d9d0e5;line-height:1.55}
+    .comparison-read b{color:#fff}
+
     .foot{margin-top:18px;color:var(--muted-2);font-size:11px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
     .loading{position:fixed;inset:0;background:#11091c;display:flex;align-items:center;justify-content:center;z-index:999;transition:opacity .35s ease}
     .loading.hide{opacity:0;pointer-events:none}
@@ -130,8 +149,8 @@
     .error{color:#ffb4bd}
 
     @media(max-width:1180px){.kpis{grid-template-columns:repeat(3,1fr)}.insights{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:900px){.filters{grid-template-columns:1fr 1fr}.grid-2,.grid-3{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}.hero-badge{text-align:left}.chart-box{height:290px}}
-    @media(max-width:620px){.shell{width:94vw;padding-top:26px}.filters{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.insights{grid-template-columns:1fr}.metric-row{grid-template-columns:130px 1fr 48px}.hero-badge{width:100%}}
+    @media(max-width:900px){.filters{grid-template-columns:1fr 1fr}.grid-2,.grid-3{grid-template-columns:1fr}.compare-highlights{grid-template-columns:1fr}.chart-box{height:290px}}
+    @media(max-width:620px){.shell{width:94vw;padding-top:26px}.filters{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.insights{grid-template-columns:1fr}.metric-row{grid-template-columns:130px 1fr 48px}.section-heading{align-items:flex-start;flex-direction:column}}
   </style>
 </head>
 <body>
@@ -149,10 +168,6 @@
         <h1>Adopción de Inteligencia Artificial</h1>
         <div class="subtitle">Dashboard interactivo · estudiantes de Ingeniería y Humanidades</div>
       </div>
-      <div class="hero-badge glass">
-        <b id="heroN">—</b>
-        <span>respuestas en el segmento actual</span>
-      </div>
     </section>
 
     <section class="filters glass">
@@ -161,6 +176,14 @@
       <div class="filter"><label>FRECUENCIA DE USO</label><select id="frecuencia"><option value="Todos">Todas</option></select></div>
       <button class="reset" id="resetBtn">Limpiar filtros</button>
     </section>
+
+    <div class="section-heading">
+      <div>
+        <div class="section-kicker">Resultados generales</div>
+        <div class="section-caption">Indicadores principales del segmento seleccionado</div>
+      </div>
+      <div class="live-state">Datos conectados al archivo de encuestas</div>
+    </div>
 
     <section class="kpis">
       <article class="kpi"><div class="kpi-label">Respuestas</div><div class="kpi-value" id="kpiN">—</div><div class="kpi-note">Registros analizados</div></article>
@@ -272,6 +295,23 @@
     </section>
 
     <section class="tab" id="tab-comparacion">
+      <div class="compare-highlights">
+        <div class="compare-highlight">
+          <div class="compare-label">Muestra comparada</div>
+          <div class="compare-number" id="compareSample">—</div>
+          <div class="compare-note">Ingeniería / Humanidades</div>
+        </div>
+        <div class="compare-highlight">
+          <div class="compare-label">Mayor brecha observada</div>
+          <div class="compare-number" id="compareGap">—</div>
+          <div class="compare-note" id="compareGapNote">—</div>
+        </div>
+        <div class="compare-highlight">
+          <div class="compare-label">Mayor valor descriptivo</div>
+          <div class="compare-number" id="compareLeader">—</div>
+          <div class="compare-note" id="compareLeaderNote">—</div>
+        </div>
+      </div>
       <div class="grid-2">
         <article class="card">
           <div class="card-head"><div><div class="card-title">Ingeniería vs Humanidades</div><div class="card-sub">Comparación descriptiva de indicadores clave</div></div><span class="pill">Mismo año/frecuencia</span></div>
@@ -282,11 +322,12 @@
           <div style="overflow:auto"><table class="comparison-table"><thead><tr><th>Indicador</th><th>Ingeniería</th><th>Humanidades</th><th>Diferencia</th></tr></thead><tbody id="compareTable"></tbody></table></div>
         </article>
       </div>
+      <div class="comparison-read" id="comparisonRead">La comparación es descriptiva y se actualiza con los filtros de año y frecuencia.</div>
     </section>
 
     <div class="foot">
       <span id="status">Cargando base...</span>
-      <span>Los resultados son descriptivos de las 56 respuestas del sondeo.</span>
+      <span>Los resultados son descriptivos de las 56 respuestas del sondeo · Dashboard interactivo.</span>
     </div>
   </main>
 
@@ -318,7 +359,7 @@
     charts[id] = new Chart($(id),{
       type:"bar",
       data:{labels,datasets:[{data:values,backgroundColor:labels.map((_,i)=>palette[i%palette.length]),borderRadius:8,borderSkipped:false}]},
-      options:{responsive:true,maintainAspectRatio:false,indexAxis:horizontal?"y":"x",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw}${suffix}`}}},scales:horizontal?{x:{...baseScale(),beginAtZero:true},y:{...baseScale(),grid:{display:false}}}:{x:{...baseScale(),grid:{display:false}},y:{...baseScale(),beginAtZero:true}}}
+      options:{responsive:true,maintainAspectRatio:false,indexAxis:horizontal?"y":"x",animation:{duration:700,easing:"easeOutQuart"},interaction:{mode:"nearest",intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw}${suffix}`}}},scales:horizontal?{x:{...baseScale(),beginAtZero:true},y:{...baseScale(),grid:{display:false}}}:{x:{...baseScale(),grid:{display:false}},y:{...baseScale(),beginAtZero:true}}}
     });
   }
 
@@ -327,7 +368,7 @@
     charts[id] = new Chart($(id),{
       type:"doughnut",
       data:{labels,datasets:[{data:values,backgroundColor:labels.map((_,i)=>palette[i%palette.length]),borderColor:"rgba(20,11,31,.75)",borderWidth:3,hoverOffset:6}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:"65%",plugins:{legend:{position:"bottom"}}}
+      options:{responsive:true,maintainAspectRatio:false,cutout:"65%",animation:{duration:750,easing:"easeOutQuart"},interaction:{mode:"nearest",intersect:false},plugins:{legend:{position:"bottom"},tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw}`}}}}
     });
   }
 
@@ -336,7 +377,7 @@
     charts[id] = new Chart($(id),{
       type:"bar",
       data:{labels,datasets:[{label:"Ingeniería",data:a,backgroundColor:"#b77cff",borderRadius:7},{label:"Humanidades",data:b,backgroundColor:"#7fe0bd",borderRadius:7}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.raw.toFixed(1)}%`}}},scales:{x:{...baseScale(),grid:{display:false}},y:{...baseScale(),beginAtZero:true,max:100,ticks:{callback:v=>v+"%"}}}}
+      options:{responsive:true,maintainAspectRatio:false,animation:{duration:750,easing:"easeOutQuart"},interaction:{mode:"index",intersect:false},plugins:{tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.raw.toFixed(1)}%`}}},scales:{x:{...baseScale(),grid:{display:false}},y:{...baseScale(),beginAtZero:true,max:100,ticks:{callback:v=>v+"%"}}}}
     });
   }
 
@@ -379,7 +420,7 @@
   function percentBy(data,key,predicate){return pct(countIf(data,r=>predicate(text(r,key))),data.length)}
 
   function renderKpis(m){
-    $('heroN').textContent=m.n;$('kpiN').textContent=m.n;$('kpiDaily').textContent=fmtPct(m.daily);$('kpiSat').textContent=fmtPct(m.sat);
+    $('kpiN').textContent=m.n;$('kpiDaily').textContent=fmtPct(m.daily);$('kpiSat').textContent=fmtPct(m.sat);
     $('kpiImprove').textContent=fmtPct(m.improve);$('kpiVerify').textContent=fmtPct(m.verify);$('kpiRisk').textContent=fmtPct(m.risk);
   }
 
@@ -401,16 +442,17 @@
     ];
     $('summaryMetrics').innerHTML=rows.map(([name,v])=>`<div class="metric-row"><div class="name">${name}</div><div class="track"><div class="fill" style="width:${Math.max(0,Math.min(100,v))}%"></div></div><div class="pct">${v.toFixed(1)}%</div></div>`).join('');
 
-    const faculty=selected().fac==="Todos"?"el segmento seleccionado":selected().fac;
+    const faculty=selected().fac==="Todos"?"Segmento actual":selected().fac;
     const topConcern=pairs[0]||["Sin datos",0];
     const trustGap=m.understand-m.trust;
-    const insightTexts=[
-      `${fmtPct(m.daily)} utiliza IA a diario en ${faculty}.`,
-      `${fmtPct(m.improve)} percibe una mejora en la calidad de sus trabajos académicos.`,
-      `La utilidad supera a la confianza por ${Math.round(trustGap)} puntos: ${fmtPct(m.understand)} dice que ayuda a entender temas complejos y ${fmtPct(m.trust)} confía en sus resultados.`,
-      `La preocupación principal es “${topConcern[0]}”, mencionada por ${topConcern[1]} estudiante${topConcern[1]===1?'':'s'}.`
+    const topConcernPct=pct(topConcern[1],data.length);
+    const insightCards=[
+      {n:"01",title:"Adopción diaria",value:fmtPct(m.daily),meta:`Uso diario en ${faculty.toLowerCase()}.`},
+      {n:"02",title:"Impacto percibido",value:fmtPct(m.improve),meta:"Considera que la calidad de sus trabajos mejoró."},
+      {n:"03",title:"Utilidad vs confianza",value:`${Math.round(trustGap)} pp`,meta:`Brecha entre ayuda percibida (${fmtPct(m.understand)}) y confianza (${fmtPct(m.trust)}).`},
+      {n:"04",title:"Principal preocupación",value:fmtPct(topConcernPct),meta:topConcern[0]}
     ];
-    $('insights').innerHTML=insightTexts.map((t,i)=>`<div class="insight"><span class="num">${i+1}</span><p>${t}</p></div>`).join('');
+    $('insights').innerHTML=insightCards.map(c=>`<div class="insight"><div class="insight-head"><span class="num">${c.n}</span><span class="insight-title">${c.title}</span></div><div class="insight-value">${c.value}</div><div class="insight-meta">${c.meta}</div></div>`).join('');
   }
 
   function renderUsage(data){
@@ -492,10 +534,31 @@
     const av=[a.daily,a.sat,a.improve,a.verify,a.risk,a.training];
     const bv=[b.daily,b.sat,b.improve,b.verify,b.risk,b.training];
     groupedBar("chartCompare",labels,av,bv);
+
+    const diffs=av.map((v,i)=>v-bv[i]);
+    const maxIdx=diffs.reduce((best,d,i)=>Math.abs(d)>Math.abs(diffs[best])?i:best,0);
+    const maxDiff=diffs[maxIdx]||0;
+    const engWins=diffs.filter(d=>d>0.05).length;
+    const humWins=diffs.filter(d=>d<-0.05).length;
+    const leader=engWins>humWins?"Ingeniería":humWins>engWins?"Humanidades":"Equilibrado";
+    const leaderCount=Math.max(engWins,humWins);
+
+    $('compareSample').textContent=`${a.n} / ${b.n}`;
+    $('compareGap').textContent=`${Math.abs(maxDiff).toFixed(1)} pp`;
+    $('compareGapNote').textContent=`${labels[maxIdx]} · mayor en ${maxDiff>=0?'Ingeniería':'Humanidades'}`;
+    $('compareLeader').textContent=leader;
+    $('compareLeaderNote').textContent=leader==="Equilibrado"?"Mismo número de indicadores con mayor valor":`${leaderCount} de ${labels.length} indicadores con mayor valor`;
+
     $('compareTable').innerHTML=labels.map((label,i)=>{
-      const d=av[i]-bv[i];const cls=d>0.05?'delta-pos':d<-0.05?'delta-neg':'delta-zero';
+      const d=diffs[i];const cls=d>0.05?'delta-pos':d<-0.05?'delta-neg':'delta-zero';
       return `<tr><td>${label}</td><td>${av[i].toFixed(1)}%</td><td>${bv[i].toFixed(1)}%</td><td class="${cls}">${d>0?'+':''}${d.toFixed(1)} pp</td></tr>`;
     }).join('');
+
+    const filterParts=[];const f=selected();
+    if(f.year!=="Todos")filterParts.push(`año ${f.year}`);
+    if(f.freq!=="Todos")filterParts.push(`frecuencia ${f.freq.toLowerCase()}`);
+    const scope=filterParts.length?` dentro del filtro de ${filterParts.join(' y ')}`:" en la vista general";
+    $('comparisonRead').innerHTML=`<b>Lectura descriptiva:</b> ${leader==="Equilibrado"?'ambas facultades muestran un comportamiento equilibrado':'<b>'+leader+'</b> presenta valores más altos en '+leaderCount+' de '+labels.length+' indicadores'}${scope}. La mayor diferencia aparece en <b>${labels[maxIdx]}</b>, con <b>${Math.abs(maxDiff).toFixed(1)} puntos porcentuales</b>. Estas diferencias describen la muestra y no implican significancia estadística.`;
   }
 
   function renderAll(){
