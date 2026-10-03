@@ -7,128 +7,655 @@
 
     <title>Dashboard IA</title>
 
-    <!-- Librería para leer Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #150f24, #2b1747);
+            font-family: Arial, Helvetica, sans-serif;
             color: white;
             min-height: 100vh;
 
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background:
+                radial-gradient(circle at top right, #5a2b8a55, transparent 35%),
+                radial-gradient(circle at bottom left, #7f4bc555, transparent 35%),
+                linear-gradient(135deg, #120c1e, #211233 50%, #160d25);
         }
 
-        .contenedor {
-            text-align: center;
+        .dashboard {
+            width: 92%;
+            max-width: 1400px;
+            margin: auto;
+            padding: 45px 0 70px;
+        }
+
+        .encabezado {
+            margin-bottom: 35px;
+        }
+
+        .etiqueta {
+            color: #c59cff;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         h1 {
-            font-size: 40px;
-            margin-bottom: 10px;
+            font-size: 38px;
+            margin: 8px 0;
         }
 
         .subtitulo {
-            color: #c7b5e8;
-            margin-bottom: 40px;
+            color: #b8aec7;
+            font-size: 16px;
         }
 
-        .tarjeta {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            padding: 35px 60px;
-            backdrop-filter: blur(10px);
+        .panel-filtros {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr) auto;
+            gap: 15px;
+
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(16px);
+
+            padding: 22px;
+            border-radius: 18px;
+            margin-bottom: 28px;
         }
 
-        .numero {
-            font-size: 60px;
+        .filtro label {
+            display: block;
+            font-size: 12px;
+            color: #bdb3ca;
+            margin-bottom: 8px;
+        }
+
+        select {
+            width: 100%;
+            padding: 13px 14px;
+
+            background: #241735;
+            color: white;
+
+            border: 1px solid #523b6d;
+            border-radius: 10px;
+
+            outline: none;
+            cursor: pointer;
+        }
+
+        select:hover {
+            border-color: #a875e8;
+        }
+
+        .boton {
+            align-self: end;
+            height: 43px;
+
+            padding: 0 22px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: linear-gradient(135deg, #8f5fd1, #bc83ff);
+            color: white;
+
             font-weight: bold;
-            color: #c89cff;
+            cursor: pointer;
+
+            transition: 0.25s;
         }
 
-        .texto {
-            font-size: 18px;
-            color: #ddd;
+        .boton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px #9d69df55;
         }
 
-        #estado {
-            margin-top: 20px;
-            color: #aaa;
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
         }
+
+        .kpi {
+            position: relative;
+
+            padding: 25px;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,0.10),
+                    rgba(255,255,255,0.04)
+                );
+
+            border: 1px solid rgba(255,255,255,0.12);
+
+            backdrop-filter: blur(14px);
+
+            overflow: hidden;
+
+            transition: 0.25s;
+        }
+
+        .kpi:hover {
+            transform: translateY(-5px);
+            border-color: #a976e3;
+        }
+
+        .kpi::after {
+            content: "";
+            position: absolute;
+
+            width: 90px;
+            height: 90px;
+
+            right: -30px;
+            top: -30px;
+
+            background: #9b66dd33;
+            border-radius: 50%;
+        }
+
+        .kpi-titulo {
+            color: #bdb3ca;
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+
+        .kpi-numero {
+            font-size: 38px;
+            font-weight: bold;
+        }
+
+        .kpi-descripcion {
+            font-size: 12px;
+            margin-top: 8px;
+            color: #8f839e;
+        }
+
+        .estado {
+            margin-top: 22px;
+            font-size: 13px;
+            color: #998ca9;
+        }
+
+        @media(max-width: 900px) {
+
+            .panel-filtros {
+                grid-template-columns: 1fr;
+            }
+
+            .kpis {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media(max-width: 550px) {
+
+            .kpis {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
-    <div class="contenedor">
+<div class="dashboard">
 
-        <h1>Adopción de Inteligencia Artificial</h1>
+    <div class="encabezado">
+
+        <div class="etiqueta">
+            Investigación de Mercados
+        </div>
+
+        <h1>
+            Adopción de Inteligencia Artificial
+        </h1>
 
         <div class="subtitulo">
-            Dashboard interactivo de estudiantes universitarios
-        </div>
-
-        <div class="tarjeta">
-
-            <div id="cantidad" class="numero">
-                ...
-            </div>
-
-            <div class="texto">
-                Respuestas analizadas
-            </div>
-
-        </div>
-
-        <div id="estado">
-            Cargando base de datos...
+            Análisis interactivo de estudiantes de Ingeniería y Humanidades
         </div>
 
     </div>
 
 
-    <script>
+    <div class="panel-filtros">
 
-        fetch("encuestas.xlsx")
+        <div class="filtro">
 
-            .then(respuesta => respuesta.arrayBuffer())
+            <label>FACULTAD</label>
 
-            .then(datos => {
+            <select id="facultad">
+                <option value="Todos">Todas</option>
+            </select>
 
-                const workbook = XLSX.read(datos, {
-                    type: "array"
-                });
+        </div>
 
-                const hoja = workbook.Sheets["Datos"];
 
-                const encuesta = XLSX.utils.sheet_to_json(hoja);
+        <div class="filtro">
 
-                document.getElementById("cantidad").textContent =
-                    encuesta.length;
+            <label>AÑO DE INGRESO</label>
 
-                document.getElementById("estado").textContent =
-                    "Base de datos cargada correctamente";
+            <select id="anio">
+                <option value="Todos">Todos</option>
+            </select>
 
-                console.log(encuesta);
+        </div>
 
-            })
 
-            .catch(error => {
+        <div class="filtro">
 
-                console.error(error);
+            <label>FRECUENCIA DE USO</label>
 
-                document.getElementById("estado").textContent =
-                    "Error al cargar la base de datos";
+            <select id="frecuencia">
+                <option value="Todos">Todas</option>
+            </select>
 
-            });
+        </div>
 
-    </script>
+
+        <button class="boton" onclick="limpiarFiltros()">
+            Limpiar filtros
+        </button>
+
+    </div>
+
+
+    <div class="kpis">
+
+        <div class="kpi">
+
+            <div class="kpi-titulo">
+                RESPUESTAS
+            </div>
+
+            <div id="kpiRespuestas" class="kpi-numero">
+                -
+            </div>
+
+            <div class="kpi-descripcion">
+                Registros analizados
+            </div>
+
+        </div>
+
+
+        <div class="kpi">
+
+            <div class="kpi-titulo">
+                USO DIARIO DE IA
+            </div>
+
+            <div id="kpiDiario" class="kpi-numero">
+                -
+            </div>
+
+            <div class="kpi-descripcion">
+                Utiliza IA todos los días
+            </div>
+
+        </div>
+
+
+        <div class="kpi">
+
+            <div class="kpi-titulo">
+                SATISFACCIÓN POSITIVA
+            </div>
+
+            <div id="kpiSatisfaccion" class="kpi-numero">
+                -
+            </div>
+
+            <div class="kpi-descripcion">
+                De acuerdo o totalmente de acuerdo
+            </div>
+
+        </div>
+
+
+        <div class="kpi">
+
+            <div class="kpi-titulo">
+                MEJORA PERCIBIDA
+            </div>
+
+            <div id="kpiMejora" class="kpi-numero">
+                -
+            </div>
+
+            <div class="kpi-descripcion">
+                Considera que sus trabajos mejoraron
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="estado" class="estado">
+        Cargando información...
+    </div>
+
+</div>
+
+
+
+<script>
+
+let datosOriginales = [];
+
+
+fetch("encuestas.xlsx")
+
+.then(respuesta => respuesta.arrayBuffer())
+
+.then(datos => {
+
+    const workbook = XLSX.read(datos, {
+        type: "array"
+    });
+
+
+    const hoja = workbook.Sheets["Datos"];
+
+
+    datosOriginales =
+        XLSX.utils.sheet_to_json(hoja);
+
+
+    cargarFiltros();
+
+    actualizarDashboard();
+
+
+    document.getElementById("estado").textContent =
+        "Base actualizada correctamente · 56 respuestas disponibles";
+
+})
+
+
+.catch(error => {
+
+    console.error(error);
+
+    document.getElementById("estado").textContent =
+        "No fue posible cargar la base de datos";
+
+});
+
+
+
+function cargarFiltros() {
+
+    const facultades =
+        [...new Set(
+            datosOriginales
+            .map(x => x["Facultad"])
+            .filter(Boolean)
+        )]
+        .sort();
+
+
+    const anios =
+        [...new Set(
+            datosOriginales
+            .map(x => x["Año de ingreso"])
+            .filter(Boolean)
+        )]
+        .sort((a,b) => a-b);
+
+
+    const frecuencias =
+        [...new Set(
+            datosOriginales
+            .map(x => x["Frecuencia de uso de IA"])
+            .filter(Boolean)
+        )];
+
+
+    llenarSelect(
+        "facultad",
+        facultades
+    );
+
+
+    llenarSelect(
+        "anio",
+        anios
+    );
+
+
+    llenarSelect(
+        "frecuencia",
+        frecuencias
+    );
+
+}
+
+
+
+function llenarSelect(id, valores) {
+
+    const select =
+        document.getElementById(id);
+
+
+    valores.forEach(valor => {
+
+        const opcion =
+            document.createElement("option");
+
+
+        opcion.value = valor;
+
+        opcion.textContent = valor;
+
+
+        select.appendChild(opcion);
+
+    });
+
+}
+
+
+
+function filtrarDatos() {
+
+    const facultad =
+        document.getElementById("facultad").value;
+
+
+    const anio =
+        document.getElementById("anio").value;
+
+
+    const frecuencia =
+        document.getElementById("frecuencia").value;
+
+
+    return datosOriginales.filter(fila => {
+
+
+        const cumpleFacultad =
+            facultad === "Todos" ||
+            fila["Facultad"] == facultad;
+
+
+        const cumpleAnio =
+            anio === "Todos" ||
+            fila["Año de ingreso"] == anio;
+
+
+        const cumpleFrecuencia =
+            frecuencia === "Todos" ||
+            fila["Frecuencia de uso de IA"] == frecuencia;
+
+
+        return (
+            cumpleFacultad &&
+            cumpleAnio &&
+            cumpleFrecuencia
+        );
+
+    });
+
+}
+
+
+
+function porcentaje(valor, total) {
+
+    if(total === 0) {
+        return "0%";
+    }
+
+    return Math.round(
+        valor / total * 100
+    ) + "%";
+
+}
+
+
+
+function actualizarDashboard() {
+
+    const datos =
+        filtrarDatos();
+
+
+    const total =
+        datos.length;
+
+
+    const diario =
+        datos.filter(
+            x =>
+            x["Frecuencia de uso de IA"]
+            ===
+            "A diario"
+        ).length;
+
+
+    const satisfaccion =
+        datos.filter(
+            x =>
+            x["Satisfacción general"] === "De acuerdo" ||
+            x["Satisfacción general"] === "Totalmente de acuerdo"
+        ).length;
+
+
+    const mejora =
+        datos.filter(
+            x =>
+            x["Cambio percibido en calidad"] === "Ha mejorado algo" ||
+            x["Cambio percibido en calidad"] === "Ha mejorado mucho"
+        ).length;
+
+
+    document.getElementById(
+        "kpiRespuestas"
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        "kpiDiario"
+    ).textContent =
+        porcentaje(
+            diario,
+            total
+        );
+
+
+    document.getElementById(
+        "kpiSatisfaccion"
+    ).textContent =
+        porcentaje(
+            satisfaccion,
+            total
+        );
+
+
+    document.getElementById(
+        "kpiMejora"
+    ).textContent =
+        porcentaje(
+            mejora,
+            total
+        );
+
+}
+
+
+
+function limpiarFiltros() {
+
+    document.getElementById(
+        "facultad"
+    ).value =
+        "Todos";
+
+
+    document.getElementById(
+        "anio"
+    ).value =
+        "Todos";
+
+
+    document.getElementById(
+        "frecuencia"
+    ).value =
+        "Todos";
+
+
+    actualizarDashboard();
+
+}
+
+
+
+document
+.getElementById("facultad")
+.addEventListener(
+    "change",
+    actualizarDashboard
+);
+
+
+document
+.getElementById("anio")
+.addEventListener(
+    "change",
+    actualizarDashboard
+);
+
+
+document
+.getElementById("frecuencia")
+.addEventListener(
+    "change",
+    actualizarDashboard
+);
+
+</script>
+
 
 </body>
-
 </html>
